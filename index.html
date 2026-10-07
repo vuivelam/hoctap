@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0e1412">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>Võ Lâm Idle</title>
+<link rel="stylesheet" href="fonts/ibm-plex-mono.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="lvbox"><span id="lv">1</span></div>
+    <div class="topmid">
+      <div class="row"><b id="heroName">Võ Lâm Idle</b><span id="stageLbl"></span></div>
+      <div class="bar xp"><i id="xpBar"></i><span id="xpTxt"></span></div>
+    </div>
+    <div class="gold"><span class="coin"></span><span id="gold">0</span></div>
+    <button id="giftBtn" title="Phần thưởng">🎁</button>
+    <button id="compactBtn" title="Thu gọn / mở rộng sân đấu">⛶</button>
+  </header>
+
+  <section id="battle">
+    <div id="bg"></div>
+    <canvas id="arena"></canvas>
+    <div id="hud">
+      <div class="bar hp"><i id="hpBar"></i><span id="hpTxt"></span></div>
+      <div class="bar mp"><i id="mpBar"></i><span id="mpTxt"></span></div>
+      <div id="mainSk"></div>
+    </div>
+    <button id="ctrlBtn" class="chip"></button>
+    <button id="inBtn" class="chip"></button>
+    <button id="rotBtn" class="chip"></button>
+    <button id="svBtn" class="chip">⚔ Luyện Công</button>
+    <div id="svHud" class="hidden">
+      <div id="svTopBar">
+        <span id="svGoldWrap">💰 <b id="svGold">0</b></span>
+        <button id="svPauseBtn" class="chip">⏸</button>
+      </div>
+      <div id="svPad">
+        <button id="svUlt" class="pbtn ult"><div class="cd"></div><span class="lbl">Tuyệt kỹ</span><small class="lock"></small></button>
+        <button id="svBomb" class="pbtn bomb"><span class="lbl">💣 <b id="svBombCnt">0</b></span></button>
+        <button id="svHpBtn" class="pbtn pot hp"><div class="cd"></div><span>HP</span></button>
+      </div>
+    </div>
+    <div id="svBar" class="hidden"></div>
+    <div id="townBar" class="hidden"><b id="townName"></b><button class="btn sm" id="bShop">Cửa hàng</button><button class="btn sm" id="bStashT">Kho chung</button><button class="btn sm" id="bSellTown">Bán đồ không khớp lọc</button><button class="btn sm on" id="bBack">Trở lại ải</button></div>
+    <div id="pad">
+      <button class="pbtn sk" data-i="0"><i></i><b>1</b></button>
+      <button class="pbtn sk" data-i="1"><i></i><b>2</b></button>
+      <button class="pbtn sk" data-i="2"><i></i><b>3</b></button>
+      <button class="pbtn sk" data-i="3"><i></i><b>4</b></button>
+      <button class="pbtn pot hp" id="bHp"><div class="cd"></div><span>HP</span></button>
+      <button class="pbtn pot mp" id="bMp"><div class="cd"></div><span>MP</span></button>
+      <button class="pbtn pot tp" id="bTp"><div class="cd"></div><span>Về<br>thành</span></button>
+    </div>
+  </section>
+
+  <main id="panel">
+    <div class="tab" id="t-log"></div>
+    <div class="tab hidden" id="t-char"></div>
+    <div class="tab hidden" id="t-skill"></div>
+    <div class="tab hidden" id="t-inv"></div>
+    <div class="tab hidden" id="t-more"></div>
+  </main>
+
+  <nav id="tabs">
+    <button data-t="log" class="on">Giang hồ</button>
+    <button data-t="char">Nhân vật<em class="dot" id="dotChar"></em></button>
+    <button data-t="skill">Võ công<em class="dot" id="dotSkill"></em></button>
+    <button data-t="inv">Hành trang</button>
+    <button data-t="more">Khác</button>
+  </nav>
+
+  <div id="modal" class="hidden" role="dialog" aria-modal="true"><div class="mbox" tabindex="-1"><button class="mx" id="mClose">✕</button><div id="mBody"></div></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<!-- NẠP THƯ VIỆN ĐÁY VÀ DỮ LIỆU GAME -->
+<script src="data.js"></script>
+<script src="world.js"></script>
+<script src="sound.js"></script>
+<script src="fx.js"></script>
+<script src="jmo.js"></script>
+<script src="js/core.js"></script>
+<script src="js/mapobs.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/loot.js"></script>
+<script src="rdata.js"></script>
+<script src="js/sets.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/save.js"></script>
+<script src="js/render.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/control.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/rewards.js"></script>
+<script src="js/forge.js"></script>
+<script src="js/auto.js"></script>
+<script src="js/guide.js"></script>
+<script src="js/stash.js"></script>
+<script src="js/survival.js"></script>
+<script src="js/main.js"></script>
+
+<!-- NẠP THƯ VIỆN FIREBASE TRƯỚC ONLINE FEATURES -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="js/online_features.js"></script>
+<script src="js/custom_stats.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBwhUTgo0JCDSA2vXTHDsdZZlVYNDvbu-c",
+    authDomain: "jxweb6868.firebaseapp.com",
+    projectId: "jxweb6868",
+    storageBucket: "jxweb6868.firebasestorage.app",
+    messagingSenderId: "644825919287",
+    appId: "1:644825919287:web:24cf958802060ad8fb4b2",
+    databaseURL: "https://jxweb6868-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    const connectedRef = db.ref('.info/connected');
+    const userListRef = db.ref('online_users');
+
+    connectedRef.on('value', (snap) => {
+      if (snap.val() === true) {
+        const con = userListRef.push();
+        con.onDisconnect().remove();
+        con.set(true);
+      }
+    });
+
+    userListRef.on('value', (snap) => {
+      const count = snap.numChildren() || 1;
+      
+      let wrapper = document.getElementById('topOnlineWrapper');
+      if (!wrapper) {
+        const heroNameEl = document.getElementById('heroName');
+        if (heroNameEl) {
+          wrapper = document.createElement('span');
+          wrapper.id = 'topOnlineWrapper';
+          wrapper.style.display = 'inline-flex';
+          wrapper.style.alignItems = 'center';
+          wrapper.style.gap = '5px';
+          wrapper.style.marginLeft = '6px';
+          wrapper.style.verticalAlign = 'middle';
+          
+          wrapper.innerHTML = `
+            <span id="onlineCount" style="color: #6ef76e; font-size: 11px; font-weight: bold;">🟢 ${count} online</span>
+            <button id="topBxhBtn" class="top-bxh-btn" onclick="openLeaderboardModal()">🏆 BXH</button>
+          `;
+          heroNameEl.parentNode.insertBefore(wrapper, heroNameEl.nextSibling);
+        }
+      } else {
+        const el = document.getElementById('onlineCount');
+        if (el) el.innerHTML = `🟢 ${count} online`;
+      }
+    });
+
+    if (typeof initWorldChat === 'function') initWorldChat(db);
+    if (typeof initWorldBossSync === 'function') initWorldBossSync(db);
+    setInterval(() => {
+      if (typeof syncLeaderboard === 'function') syncLeaderboard();
+    }, 30000);
+  }
+</script>
+</body>
+</html>
