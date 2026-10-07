@@ -62,7 +62,9 @@ let simAcc = 0;
 function movers() { return [H, R.petPos].concat(SV.on ? SV.en : R.enemies).filter(Boolean); }
 
 function simulateFrame(dt) {
-  simAcc += dt; let n = 0;
+  const speed = Number.isFinite(S && S.gameSpeed) ? S.gameSpeed : 1;
+  simAcc += dt * speed;
+  let n = 0;
   while (simAcc >= STEP && n < MAX_STEPS) {
     for (const o of movers()) { o._px = o.x; o._py = o.y; }
     if (SV.on) svTick(STEP); else tick(STEP);
@@ -160,7 +162,7 @@ function init() {
   applyUiPrefs();
   fitApp();
   bindControls();
-  const unlock = () => { audInit(); const z = zoneOf(Math.min(S.stage, STAGES)); preloadZoneSounds(z); if (AUD.music && sndCfg().music && AUD.music.paused) AUD.music.play().catch(() => {}); else if (!AUD.music && S.fac) playMusic(R.town ? W.town.id : z.id); };
+  const unlock = () => { audInit(); const z = zoneOf(Math.min(S.stage, STAGES)); preloadZoneSounds(z); if (AUD.music && sndCfg().music && AUD.music.paused) AUD.music.play().catch(() => {}); else playMusic(z.id); };
   document.addEventListener('pointerdown', unlock, true); document.addEventListener('keydown', unlock, true);
   resizeArena(); [H.x, H.y] = inWorld(WORLD.w / 2, WORLD.h / 2); snapCamera(); restoreGround();
   if (pk.menu) { slotMenu(); }
@@ -178,7 +180,7 @@ function init() {
       R.mana = R.P.mana; 
     }
     showTab('log'); log('Tiếp tục hành tẩu giang hồ…');
-    if (window.__tampered) { log('<span class="dim">Dữ liệu lưu không khớp chữ ký (đã chỉnh sửa ngoài game): dùng bản sao lưu gần nhất nếu có.</span>'); toast('Phát hiện chỉnh sửa file lưu'); }
+    if (window.__tampered) { log('<span class="dim">Dữ liệu lưu không khớp chữ ký (đã chỉnh sửa ngoài game): dùng bản sao lưu gần nhất nếu có.</span>'); toast('Phát hiện hack - dùng bản lưu trước đó'); }
     loginCheck(); dotGift();
   }
   document.addEventListener('visibilitychange', () => {
